@@ -1,0 +1,19 @@
+﻿CREATE TYPE Enum_Ativo AS ENUM ('Ativo', 'Inativo');
+
+CREATE TABLE Cliente (
+	Id SERIAL,
+	Nome VARCHAR(100) NOT NULL,
+	Documento VARCHAR,
+	Saldo NUMERIC(6,2) NOT NULL,
+	Atrivo Enum_Ativo NOT NULL,
+	CONSTRAINT PK_CLiente PRIMARY KEY(Id)
+);
+
+CREATE TABLE Pedido(
+	Id SERIAL,
+	Data Date NOT NULL,
+	Valor NUMERIC(6,2) NOT NULL,
+	Cliente INTEGER,
+	CONSTRAINT PK_Pedido PRIMARY KEY(Id),
+	CONSTRAINT FK_Pedido_Cliente FOREIGN KEY(Cliente) REFERENCES Cliente(Id)
+);
