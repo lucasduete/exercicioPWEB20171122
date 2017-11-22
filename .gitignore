@@ -1,0 +1,12 @@
+target/
+.idea/*
+.idea/workspace.xml
+
+/target/
+/.idea/
+/.idea/*
+
+**/.idea/
+
+
+exercicio20171122.iml
