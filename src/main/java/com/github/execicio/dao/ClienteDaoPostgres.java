@@ -32,23 +32,36 @@ public class ClienteDaoPostgres implements ClienteDaoInterface {
     }
 
     @Override
-    public boolean alterar(Cliente clienteAntigo, Cliente clienteNovo) throws SQLException, ClassNotFoundException {
-        try (Connection conn = Conexao.getConnection()) {
+    public boolean alterar(Cliente cliente) {
+        try {
 
-            String sql = "INSERT INTO Cliente (Nome, Documento, Saldo, Ativo)"
+            Connection conn = Conexao.getConnection();
 
+            String sql = "UPDATE Cliente SET Nome = ? Documento = ? Saldo = ? Ativo = ? WHERE Id = ?)";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+
+            stmt.setString(1, cliente.getNome());
+            stmt.setString(2, cliente.getDocumento());
+            stmt.setDouble(3, cliente.getSaldo());
+            stmt.setString(4, cliente.getAtivo().toString());
+
+            stmt.close();
+            conn.close();
+        } catch (SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+            return false;
         }
 
         return true;
     }
 
     @Override
-    public boolean excluir(Cliente cliente) throws SQLException, ClassNotFoundException {
+    public boolean excluir(Cliente cliente) {
         return false;
     }
 
     @Override
-    public ArrayList<Cliente> listar() throws SQLException, ClassNotFoundException {
+    public ArrayList<Cliente> listar() {
         return null;
     }
 }
