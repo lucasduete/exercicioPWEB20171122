@@ -1,18 +1,20 @@
 package com.github.execicio.model;
 
+import com.github.execicio.Enum.EnumAtivo;
+
 public class Cliente {
 
     private int id;
     private String nome;
     private String documento;
     private Double saldo;
-    private Enum ativo;
+    private EnumAtivo ativo;
 
     public Cliente() {
 
     }
 
-    public Cliente(int id, String nome, String documento, Double saldo, Enum ativo) {
+    public Cliente(int id, String nome, String documento, Double saldo, EnumAtivo ativo) {
         this.id = id;
         this.nome = nome;
         this.documento = documento;
@@ -52,11 +54,11 @@ public class Cliente {
         this.saldo = saldo;
     }
 
-    public Enum getAtivo() {
+    public EnumAtivo getAtivo() {
         return ativo;
     }
 
-    public void setAtivo(Enum ativo) {
+    public void setAtivo(EnumAtivo ativo) {
         this.ativo = ativo;
     }
 
