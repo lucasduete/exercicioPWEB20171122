@@ -5,7 +5,7 @@ CREATE TABLE Cliente (
 	Nome VARCHAR(100) NOT NULL,
 	Documento VARCHAR,
 	Saldo NUMERIC(6,2) NOT NULL,
-	Atrivo Enum_Ativo NOT NULL,
+	Ativo Enum_Ativo NOT NULL,
 	CONSTRAINT PK_CLiente PRIMARY KEY(Id)
 );
 
