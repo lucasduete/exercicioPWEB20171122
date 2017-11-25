@@ -4,10 +4,13 @@ import com.github.execicio.factory.ClienteDaoInterface;
 import com.github.execicio.factory.Conexao;
 import com.github.execicio.model.Cliente;
 
+import javax.xml.transform.Result;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ClienteDaoPostgres implements ClienteDaoInterface {
 
@@ -45,6 +48,8 @@ public class ClienteDaoPostgres implements ClienteDaoInterface {
             stmt.setDouble(3, cliente.getSaldo());
             stmt.setString(4, cliente.getAtivo().toString());
 
+            stmt.executeUpdate();
+
             stmt.close();
             conn.close();
         } catch (SQLException | ClassNotFoundException ex) {
@@ -57,11 +62,59 @@ public class ClienteDaoPostgres implements ClienteDaoInterface {
 
     @Override
     public boolean excluir(Cliente cliente) {
-        return false;
+        try {
+            Connection conn = Conexao.getConnection();
+
+            String sql = "DELETE FROM Cliente WHERE Id = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+
+            stmt.setInt(1, cliente.getId());
+
+            stmt.executeUpdate();
+
+            stmt.close();
+            conn.close();
+        } catch (SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 
     @Override
     public ArrayList<Cliente> listar() {
-        return null;
+
+        ArrayList<Cliente> clientes = new ArrayList<>();
+
+        try {
+
+            Connection conn = Conexao.getConnection();
+
+            String sql = "SELECT * FROM Cliente";
+            PreparedStatement stmt= conn.prepareStatement(sql);
+
+            ResultSet rs = stmt.executeQuery();
+
+//            while (rs.next())
+//                (clientes.add(
+//                        new Cliente(
+//                                rs.getInt("id"),
+//                                rs.getString("Nome"),
+//                                rs.getString("Documento"),
+//                                rs.getDouble("Saldo"),
+//                                Enum.valueOf(rs.getString("Ativo"))
+//                        )
+//                )
+
+            rs.close();
+            stmt.close();
+            conn.close();
+        } catch (SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+
+        return clientes;
     }
 }
