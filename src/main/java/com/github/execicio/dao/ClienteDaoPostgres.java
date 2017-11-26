@@ -1,11 +1,10 @@
 package com.github.execicio.dao;
 
 import com.github.execicio.Enum.EnumAtivo;
-import com.github.execicio.factory.ClienteDaoInterface;
+import com.github.execicio.interfaces.ClienteDaoInterface;
 import com.github.execicio.factory.Conexao;
 import com.github.execicio.model.Cliente;
 
-import javax.xml.transform.Result;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

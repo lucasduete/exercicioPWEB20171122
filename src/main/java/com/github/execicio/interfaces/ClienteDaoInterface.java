@@ -1,4 +1,4 @@
-package com.github.execicio.factory;
+package com.github.execicio.interfaces;
 
 import com.github.execicio.model.Cliente;
 

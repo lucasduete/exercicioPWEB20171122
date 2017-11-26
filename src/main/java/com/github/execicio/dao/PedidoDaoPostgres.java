@@ -1,7 +1,7 @@
 package com.github.execicio.dao;
 
 import com.github.execicio.factory.Conexao;
-import com.github.execicio.factory.PedidoDaoInterface;
+import com.github.execicio.interfaces.PedidoDaoInterface;
 import com.github.execicio.model.Pedido;
 
 import java.sql.*;
