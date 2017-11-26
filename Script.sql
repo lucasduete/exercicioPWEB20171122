@@ -13,7 +13,7 @@ CREATE TABLE Pedido(
 	Id SERIAL,
 	Data Date NOT NULL,
 	Valor NUMERIC(6,2) NOT NULL,
-	Cliente INTEGER,
+	idCliente INTEGER,
 	CONSTRAINT PK_Pedido PRIMARY KEY(Id),
-	CONSTRAINT FK_Pedido_Cliente FOREIGN KEY(Cliente) REFERENCES Cliente(Id)
+	CONSTRAINT FK_Pedido_Cliente FOREIGN KEY(idCliente) REFERENCES Cliente(Id)
 );
