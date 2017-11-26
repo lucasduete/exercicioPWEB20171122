@@ -4,10 +4,10 @@ import com.github.execicio.factory.Conexao;
 import com.github.execicio.factory.PedidoDaoInterface;
 import com.github.execicio.model.Pedido;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 
 public class PedidoDaoPostgres implements PedidoDaoInterface {
@@ -65,11 +65,62 @@ public class PedidoDaoPostgres implements PedidoDaoInterface {
 
     @Override
     public boolean excluir(Pedido pedido) {
-        return false;
+
+        try {
+            Connection conn = Conexao.getConnection();
+
+            String sql = "DELETE Pedido WHERE Id = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+
+            stmt.setInt(1, pedido.getId());
+
+            stmt.executeUpdate();
+
+            stmt.close();
+            conn.close();
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 
     @Override
     public ArrayList<Pedido> listar() {
-        return null;
+        ArrayList<Pedido> pedidos = new ArrayList<>();
+
+        try {
+            Connection conn = Conexao.getConnection();
+
+            String sql = "SELECT * FROM Pedido";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Pedido pedido = new Pedido();
+                pedido.setId(rs.getInt("Id"));
+                pedido.setValor(rs.getDouble("Valor"));
+
+                Date data = rs.getDate("Data");
+                Instant instant = Instant.ofEpochMilli(data.getTime());
+                pedido.setData(LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalDate());
+
+                pedido.setCliente(
+                        new ClienteDaoPostgres().
+                                getCliente(rs.getInt("IdCliente"))
+                );
+            }
+
+            rs.close();
+            stmt.close();
+            conn.close();
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return pedidos;
     }
 }
