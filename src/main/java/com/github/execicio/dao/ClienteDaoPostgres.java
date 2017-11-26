@@ -122,4 +122,36 @@ public class ClienteDaoPostgres implements ClienteDaoInterface {
 
         return clientes;
     }
+
+    public Cliente getCliente(int idCliente) {
+
+        try {
+
+            Connection conn = Conexao.getConnection();
+
+            String sql = "SELECT * FROM Cliente WHERE Id = ?";
+            PreparedStatement stmt= conn.prepareStatement(sql);
+
+            stmt.setInt(1, idCliente);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next())
+                return new Cliente(
+                    idCliente,
+                    rs.getString("Nome"),
+                    rs.getString("Documento"),
+                    rs.getDouble("Saldo"),
+                    EnumAtivo.valueOf(rs.getString("Ativo"))
+                );
+
+            rs.close();
+            stmt.close();
+            conn.close();
+        } catch (SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
+    }
 }
