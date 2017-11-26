@@ -111,6 +111,8 @@ public class PedidoDaoPostgres implements PedidoDaoInterface {
                         new ClienteDaoPostgres().
                                 getCliente(rs.getInt("IdCliente"))
                 );
+
+                pedidos.add(pedido);
             }
 
             rs.close();
@@ -122,5 +124,44 @@ public class PedidoDaoPostgres implements PedidoDaoInterface {
         }
 
         return pedidos;
+    }
+
+    public Pedido getPedido(int idPedido) {
+
+        try {
+            Connection conn = Conexao.getConnection();
+
+            String sql = "SELECT * FROM Pedido WHERE Id = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+
+            stmt.setInt(1, idPedido);
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Pedido pedido = new Pedido();
+                pedido.setId(idPedido);
+                pedido.setValor(rs.getDouble("Valor"));
+
+                Date data = rs.getDate("Data");
+                Instant instant = Instant.ofEpochMilli(data.getTime());
+                pedido.setData(LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalDate());
+
+                pedido.setCliente(
+                        new ClienteDaoPostgres().
+                                getCliente(rs.getInt("IdCliente"))
+                );
+
+                return pedido;
+            }
+
+            rs.close();
+            stmt.close();
+            conn.close();
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }
