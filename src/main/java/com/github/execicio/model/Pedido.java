@@ -1,4 +1,4 @@
-package com.github.execicio.model;
+package com.github.execicio.model;;;
 
 import java.time.LocalDate;
 
