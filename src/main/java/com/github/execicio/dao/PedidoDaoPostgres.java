@@ -4,9 +4,11 @@ import com.github.execicio.factory.Conexao;
 import com.github.execicio.interfaces.PedidoDaoInterface;
 import com.github.execicio.model.Pedido;
 import com.sun.rowset.CachedRowSetImpl;
+import com.sun.rowset.JdbcRowSetImpl;
 import com.sun.rowset.JoinRowSetImpl;
 
 import javax.sql.rowset.CachedRowSet;
+import javax.sql.rowset.JdbcRowSet;
 import javax.sql.rowset.JoinRowSet;
 import java.sql.*;
 import java.time.Instant;
@@ -48,8 +50,10 @@ public class PedidoDaoPostgres implements PedidoDaoInterface {
                     "WHERE Id = ?", Date.valueOf(pedido.getData()), pedido.getValor(),
                     pedido.getCliente().getId(), pedido.getId());
 
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate(sql);
+            JdbcRowSet stmt = new JdbcRowSetImpl(conn);
+            stmt.setCommand(sql);
+
+            stmt.execute();
 
             stmt.close();
             conn.close();
@@ -69,8 +73,10 @@ public class PedidoDaoPostgres implements PedidoDaoInterface {
 
             String sql = String.format("DELETE Pedido WHERE Id = %n", pedido.getId());
 
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate(sql);
+            JdbcRowSet stmt = new JdbcRowSetImpl(conn);
+            stmt.setCommand(sql);
+
+            stmt.execute();
 
             stmt.close();
             conn.close();
