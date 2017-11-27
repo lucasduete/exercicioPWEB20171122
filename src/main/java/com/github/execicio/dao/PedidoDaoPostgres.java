@@ -18,14 +18,11 @@ public class PedidoDaoPostgres implements PedidoDaoInterface {
         try {
             Connection conn = Conexao.getConnection();
 
-            String sql = "INSERT INTO Pedido (Data, Valor, idCliente) VALUES(?,?,?) ";
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            String sql = String.format("INSERT INTO Pedido (Data, Valor, idCliente) " +
+                    "VALUES(%t, %d, %n)", Date.valueOf(pedido.getData()), pedido.getValor(), pedido.getCliente().getId());
 
-            stmt.setDate(1, Date.valueOf(pedido.getData()));
-            stmt.setDouble(2, pedido.getValor());
-            stmt.setInt(3, pedido.getCliente().getId());
-
-            stmt.executeUpdate();
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
 
             stmt.close();
             conn.close();
@@ -43,15 +40,12 @@ public class PedidoDaoPostgres implements PedidoDaoInterface {
         try {
             Connection conn = Conexao.getConnection();
 
-            String sql = "UPDATE Pedido SET Data = ? Valor = ? idCliente = ? WHERE Id = ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            String sql = String.format("UPDATE Pedido SET Data = ? Valor = ? idCliente = ? " +
+                    "WHERE Id = ?", Date.valueOf(pedido.getData()), pedido.getValor(),
+                    pedido.getCliente().getId(), pedido.getId());
 
-            stmt.setDate(1, Date.valueOf(pedido.getData()));
-            stmt.setDouble(2, pedido.getValor());
-            stmt.setInt(3, pedido.getCliente().getId());
-            stmt.setInt(4, pedido.getId());
-
-            stmt.executeUpdate();
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
 
             stmt.close();
             conn.close();
@@ -69,12 +63,10 @@ public class PedidoDaoPostgres implements PedidoDaoInterface {
         try {
             Connection conn = Conexao.getConnection();
 
-            String sql = "DELETE Pedido WHERE Id = ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            String sql = String.format("DELETE Pedido WHERE Id = %n", pedido.getId());
 
-            stmt.setInt(1, pedido.getId());
-
-            stmt.executeUpdate();
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
 
             stmt.close();
             conn.close();
@@ -94,9 +86,13 @@ public class PedidoDaoPostgres implements PedidoDaoInterface {
             Connection conn = Conexao.getConnection();
 
             String sql = "SELECT * FROM Pedido";
-            PreparedStatement stmt = conn.prepareStatement(sql);
 
-            ResultSet rs = stmt.executeQuery();
+            Statement stmt = conn.createStatement(
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_READ_ONLY,
+                    ResultSet.HOLD_CURSORS_OVER_COMMIT
+            );
+            ResultSet rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
                 Pedido pedido = new Pedido();
@@ -131,12 +127,14 @@ public class PedidoDaoPostgres implements PedidoDaoInterface {
         try {
             Connection conn = Conexao.getConnection();
 
-            String sql = "SELECT * FROM Pedido WHERE Id = ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            String sql = String.format("SELECT * FROM Pedido WHERE Id = %n", idPedido);
 
-            stmt.setInt(1, idPedido);
-
-            ResultSet rs = stmt.executeQuery();
+            Statement stmt = conn.createStatement(
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_READ_ONLY,
+                    ResultSet.HOLD_CURSORS_OVER_COMMIT
+            );
+            ResultSet rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
                 Pedido pedido = new Pedido();
