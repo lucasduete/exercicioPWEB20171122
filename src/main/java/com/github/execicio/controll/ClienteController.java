@@ -22,7 +22,7 @@ public class ClienteController implements ClienteDaoInterface {
 
     @Override
     public boolean alterar(Cliente cliente) {
-        
+
         return clienteDao.alterar(cliente);
     }
 
