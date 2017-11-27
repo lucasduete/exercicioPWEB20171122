@@ -8,24 +8,10 @@ import com.github.execicio.model.Cliente;
 import com.sun.rowset.CachedRowSetImpl;
 import com.sun.rowset.FilteredRowSetImpl;
 
-import javax.sql.RowSet;
-import javax.sql.RowSetEvent;
-import javax.sql.RowSetListener;
-import javax.sql.RowSetMetaData;
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.FilteredRowSet;
-import javax.sql.rowset.RowSetWarning;
-import javax.sql.rowset.spi.SyncProvider;
-import javax.sql.rowset.spi.SyncProviderException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.math.BigDecimal;
-import java.net.URL;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Map;
 
 public class ClienteDaoPostgres implements ClienteDaoInterface {
 
