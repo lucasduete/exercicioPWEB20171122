@@ -3,7 +3,11 @@ package com.github.execicio.dao;
 import com.github.execicio.factory.Conexao;
 import com.github.execicio.interfaces.PedidoDaoInterface;
 import com.github.execicio.model.Pedido;
+import com.sun.rowset.CachedRowSetImpl;
+import com.sun.rowset.JoinRowSetImpl;
 
+import javax.sql.rowset.CachedRowSet;
+import javax.sql.rowset.JoinRowSet;
 import java.sql.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -84,33 +88,50 @@ public class PedidoDaoPostgres implements PedidoDaoInterface {
 
         try {
             Connection conn = Conexao.getConnection();
-
-            String sql = "SELECT * FROM Pedido";
+            ResultSet rs = null;
+            String sql = null;
 
             Statement stmt = conn.createStatement(
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_READ_ONLY,
                     ResultSet.HOLD_CURSORS_OVER_COMMIT
             );
-            ResultSet rs = stmt.executeQuery(sql);
 
-            while (rs.next()) {
+            sql = "SELECT * FROM Pedido";
+            rs = stmt.executeQuery(sql);
+            CachedRowSet rowSetPedido = new CachedRowSetImpl();
+            rowSetPedido.populate(rs);
+
+            sql = "SELECT * FROM Cliente";
+            rs = stmt.executeQuery(sql);
+            CachedRowSet rowSetCliente = new CachedRowSetImpl();
+            rowSetCliente.populate(rs);
+
+            JoinRowSet join = new JoinRowSetImpl();
+
+            join.addRowSet(rowSetCliente, "Id");
+            join.addRowSet(rowSetPedido, "IdCliente");
+
+            while (join.next()) {
                 Pedido pedido = new Pedido();
-                pedido.setId(rs.getInt("Id"));
-                pedido.setValor(rs.getDouble("Valor"));
+                pedido.setId(join.getInt("Id"));
+                pedido.setValor(join.getDouble("Valor"));
 
-                Date data = rs.getDate("Data");
+                Date data = join.getDate("Data");
                 Instant instant = Instant.ofEpochMilli(data.getTime());
                 pedido.setData(LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalDate());
 
                 pedido.setCliente(
                         new ClienteDaoPostgres().
-                                getCliente(rs.getInt("IdCliente"))
+                                getCliente(join.getInt("IdCliente"))
                 );
 
                 pedidos.add(pedido);
             }
 
+            rowSetCliente.close();
+            rowSetPedido.close();
+            join.close();
             rs.close();
             stmt.close();
             conn.close();
