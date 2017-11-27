@@ -1,12 +1,31 @@
 package com.github.execicio.dao;
 
 import com.github.execicio.Enum.EnumAtivo;
+import com.github.execicio.filtros.ClienteFiltro;
 import com.github.execicio.interfaces.ClienteDaoInterface;
 import com.github.execicio.factory.Conexao;
 import com.github.execicio.model.Cliente;
+import com.sun.rowset.CachedRowSetImpl;
+import com.sun.rowset.FilteredRowSetImpl;
 
+import javax.sql.RowSet;
+import javax.sql.RowSetEvent;
+import javax.sql.RowSetListener;
+import javax.sql.RowSetMetaData;
+import javax.sql.rowset.CachedRowSet;
+import javax.sql.rowset.FilteredRowSet;
+import javax.sql.rowset.RowSetWarning;
+import javax.sql.rowset.spi.SyncProvider;
+import javax.sql.rowset.spi.SyncProviderException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.net.URL;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Map;
 
 public class ClienteDaoPostgres implements ClienteDaoInterface {
 
@@ -93,14 +112,18 @@ public class ClienteDaoPostgres implements ClienteDaoInterface {
 
             ResultSet rs = stmt.executeQuery(sql);
 
-            while (rs.next())
+            CachedRowSet rowSet = new CachedRowSetImpl();
+
+            rowSet.populate(rs);
+
+            while (rowSet.next())
                 clientes.add(
                         new Cliente(
-                                rs.getInt("id"),
-                                rs.getString("Nome"),
-                                rs.getString("Documento"),
-                                rs.getDouble("Saldo"),
-                                EnumAtivo.valueOf(rs.getString("Ativo"))
+                                rowSet.getInt("id"),
+                                rowSet.getString("Nome"),
+                                rowSet.getString("Documento"),
+                                rowSet.getDouble("Saldo"),
+                                EnumAtivo.valueOf(rowSet.getString("Ativo"))
                         )
                 );
 
@@ -130,13 +153,21 @@ public class ClienteDaoPostgres implements ClienteDaoInterface {
             );
             ResultSet rs = stmt.executeQuery(sql);
 
-            if (rs.next())
+            FilteredRowSet rowSet = new FilteredRowSetImpl();
+
+            rowSet.setCommand(sql);
+            rowSet.execute();
+
+            rowSet.beforeFirst();
+            rowSet.setFilter(new ClienteFiltro(idCliente));
+
+            if (rowSet.next())
                 return new Cliente(
                     idCliente,
-                    rs.getString("Nome"),
-                    rs.getString("Documento"),
-                    rs.getDouble("Saldo"),
-                    EnumAtivo.valueOf(rs.getString("Ativo"))
+                    rowSet.getString("Nome"),
+                    rowSet.getString("Documento"),
+                    rowSet.getDouble("Saldo"),
+                    EnumAtivo.valueOf(rowSet.getString("Ativo"))
                 );
 
             rs.close();
