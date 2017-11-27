@@ -113,6 +113,7 @@ public class ClienteDaoPostgres implements ClienteDaoInterface {
                         )
                 );
 
+            rowSet.close();
             rs.close();
             stmt.close();
             conn.close();
@@ -156,6 +157,7 @@ public class ClienteDaoPostgres implements ClienteDaoInterface {
                     EnumAtivo.valueOf(rowSet.getString("Ativo"))
                 );
 
+            rowSet.close();
             rs.close();
             stmt.close();
             conn.close();
