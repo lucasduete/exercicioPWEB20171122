@@ -5,10 +5,7 @@ import com.github.execicio.interfaces.ClienteDaoInterface;
 import com.github.execicio.factory.Conexao;
 import com.github.execicio.model.Cliente;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class ClienteDaoPostgres implements ClienteDaoInterface {
@@ -18,15 +15,12 @@ public class ClienteDaoPostgres implements ClienteDaoInterface {
         try {
             Connection conn = Conexao.getConnection();
 
-            String sql = "INSERT INTO Cliente (Nome, Documento, Saldo, Ativo) VALUES (?,?,?,?)";
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            String sql = String.format("INSERT INTO Cliente (Nome, Documento, Saldo, Ativo) " +
+                    "VALUES (%s,%s,%d,%s)", cliente.getNome(), cliente.getDocumento(), cliente.getSaldo(),
+                        cliente.getAtivo().toString());
 
-            stmt.setString(1, cliente.getNome());
-            stmt.setString(2, cliente.getDocumento());
-            stmt.setDouble(3, cliente.getSaldo());
-            stmt.setString(4, cliente.getAtivo().toString());
-
-            stmt.executeUpdate();
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
 
             stmt.close();
             conn.close();
@@ -44,15 +38,12 @@ public class ClienteDaoPostgres implements ClienteDaoInterface {
 
             Connection conn = Conexao.getConnection();
 
-            String sql = "UPDATE Cliente SET Nome = ? Documento = ? Saldo = ? Ativo = ? WHERE Id = ?)";
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            String sql = String.format("UPDATE Cliente SET Nome = %s Documento = %s Saldo = %d Ativo = %s " +
+                    "WHERE Id = %n)", cliente.getNome(), cliente.getDocumento(), cliente.getSaldo(),
+                    cliente.getAtivo().toString(), cliente.getId());
 
-            stmt.setString(1, cliente.getNome());
-            stmt.setString(2, cliente.getDocumento());
-            stmt.setDouble(3, cliente.getSaldo());
-            stmt.setString(4, cliente.getAtivo().toString());
-
-            stmt.executeUpdate();
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
 
             stmt.close();
             conn.close();
@@ -69,12 +60,10 @@ public class ClienteDaoPostgres implements ClienteDaoInterface {
         try {
             Connection conn = Conexao.getConnection();
 
-            String sql = "DELETE FROM Cliente WHERE Id = ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            String sql = String.format("DELETE FROM Cliente WHERE Id = %n", cliente.getId());
 
-            stmt.setInt(1, cliente.getId());
-
-            stmt.executeUpdate();
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
 
             stmt.close();
             conn.close();
@@ -96,9 +85,13 @@ public class ClienteDaoPostgres implements ClienteDaoInterface {
             Connection conn = Conexao.getConnection();
 
             String sql = "SELECT * FROM Cliente";
-            PreparedStatement stmt= conn.prepareStatement(sql);
+            Statement stmt= conn.createStatement(
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_READ_ONLY,
+                    ResultSet.HOLD_CURSORS_OVER_COMMIT
+            );
 
-            ResultSet rs = stmt.executeQuery();
+            ResultSet rs = stmt.executeQuery(sql);
 
             while (rs.next())
                 clientes.add(
@@ -128,12 +121,14 @@ public class ClienteDaoPostgres implements ClienteDaoInterface {
 
             Connection conn = Conexao.getConnection();
 
-            String sql = "SELECT * FROM Cliente WHERE Id = ?";
-            PreparedStatement stmt= conn.prepareStatement(sql);
+            String sql = String.format("SELECT * FROM Cliente WHERE Id = %n", idCliente);
 
-            stmt.setInt(1, idCliente);
-
-            ResultSet rs = stmt.executeQuery();
+            Statement stmt= conn.createStatement(
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_READ_ONLY,
+                    ResultSet.HOLD_CURSORS_OVER_COMMIT
+            );
+            ResultSet rs = stmt.executeQuery(sql);
 
             if (rs.next())
                 return new Cliente(
