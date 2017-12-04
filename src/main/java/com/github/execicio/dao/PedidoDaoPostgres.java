@@ -48,7 +48,7 @@ public class PedidoDaoPostgres implements PedidoDaoInterface {
         try {
             Connection conn = Conexao.getConnection();
 
-            String sql = String.format("UPDATE Pedido SET Data = '%tF' Valor = %f idCliente = %d " +
+            String sql = String.format("UPDATE Pedido SET Data = '%tF', Valor = %f, idCliente = %d " +
                     "WHERE Id = %d", Date.from(pedido.getData().atStartOfDay(ZoneId.systemDefault()).toInstant()),
                     pedido.getValor(), pedido.getCliente().getId(), pedido.getId());
 
@@ -60,8 +60,10 @@ public class PedidoDaoPostgres implements PedidoDaoInterface {
             stmt.close();
             conn.close();
         } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-            return false;
+            if(!e.getMessage().contains("No results were returned by the query")) {
+                e.printStackTrace();
+                return false;
+            }
         }
 
         return true;
@@ -73,7 +75,7 @@ public class PedidoDaoPostgres implements PedidoDaoInterface {
         try {
             Connection conn = Conexao.getConnection();
 
-            String sql = String.format("DELETE Pedido WHERE Id = %d", pedido.getId());
+            String sql = String.format("DELETE FROM Pedido WHERE Id = %d", pedido.getId());
 
             JdbcRowSet stmt = new JdbcRowSetImpl(conn);
             stmt.setCommand(sql);
@@ -83,8 +85,10 @@ public class PedidoDaoPostgres implements PedidoDaoInterface {
             stmt.close();
             conn.close();
         } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-            return false;
+            if(!e.getMessage().contains("No results were returned by the query")) {
+                e.printStackTrace();
+                return false;
+            }
         }
 
         return true;

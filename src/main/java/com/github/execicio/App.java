@@ -158,6 +158,6 @@ public class App {
         pedido.setId(aux);
         pedido.setValor(valor);
 
-        new PedidoController().excluir(pedido);
+        new PedidoController().alterar(pedido);
     }
 }
