@@ -14,6 +14,7 @@ import java.sql.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Date;
 import java.util.ArrayList;
 
 public class PedidoDaoPostgres implements PedidoDaoInterface {
@@ -25,7 +26,8 @@ public class PedidoDaoPostgres implements PedidoDaoInterface {
             Connection conn = Conexao.getConnection();
 
             String sql = String.format("INSERT INTO Pedido (Data, Valor, idCliente) " +
-                    "VALUES(%t, %f, %d)", Date.valueOf(pedido.getData()), pedido.getValor(), pedido.getCliente().getId());
+                    "VALUES('%tF', %f, %d)", Date.from(pedido.getData().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                    pedido.getValor(), pedido.getCliente().getId());
 
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
@@ -46,9 +48,9 @@ public class PedidoDaoPostgres implements PedidoDaoInterface {
         try {
             Connection conn = Conexao.getConnection();
 
-            String sql = String.format("UPDATE Pedido SET Data = %t Valor = %f idCliente = %d " +
-                    "WHERE Id = %d", Date.valueOf(pedido.getData()), pedido.getValor(),
-                    pedido.getCliente().getId(), pedido.getId());
+            String sql = String.format("UPDATE Pedido SET Data = '%tF' Valor = %f idCliente = %d " +
+                    "WHERE Id = %d", Date.from(pedido.getData().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                    pedido.getValor(), pedido.getCliente().getId(), pedido.getId());
 
             JdbcRowSet stmt = new JdbcRowSetImpl(conn);
             stmt.setCommand(sql);
