@@ -33,8 +33,8 @@ public class PedidoController implements PedidoDaoInterface {
     }
 
     @Override
-    public ArrayList<Pedido> listar() {
+    public ArrayList<Pedido> listar(int idCliente) {
 
-        return pedidoDao.listar();
+        return pedidoDao.listar(idCliente);
     }
 }

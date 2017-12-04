@@ -95,7 +95,7 @@ public class PedidoDaoPostgres implements PedidoDaoInterface {
     }
 
     @Override
-    public ArrayList<Pedido> listar() {
+    public ArrayList<Pedido> listar(int idCliente) {
         ArrayList<Pedido> pedidos = new ArrayList<>();
 
         try {
@@ -124,21 +124,38 @@ public class PedidoDaoPostgres implements PedidoDaoInterface {
             join.addRowSet(rowSetCliente, "Id");
             join.addRowSet(rowSetPedido, "IdCliente");
 
+            /*
+                DESCRIÇAO DAS TABELAS JOIN
+                Coluna 1 = Cliente Id
+                Coluna 2 = Cliente Nome
+                Coluna 3 = Cliente Documento
+                Coluna 4 = Cliente Saldo
+                Coluna 5 = Cliente Ativo
+                Coluna 6 = Pedido Id
+                Coluna 7 = Pedido Data
+                Coluna 8 = Pedido Valor
+                Coluna 9 = Pedido idCliente
+            */
+
             while (join.next()) {
-                Pedido pedido = new Pedido();
-                pedido.setId(join.getInt("Id"));
-                pedido.setValor(join.getDouble("Valor"));
 
-                Date data = join.getDate("Data");
-                Instant instant = Instant.ofEpochMilli(data.getTime());
-                pedido.setData(LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalDate());
+                if(join.getInt(1) == idCliente) {
 
-                pedido.setCliente(
-                        new ClienteDaoPostgres().
-                                getCliente(join.getInt("IdCliente"))
-                );
+                    Pedido pedido = new Pedido();
+                    pedido.setId(join.getInt(6));
+                    pedido.setValor(join.getDouble(8));
 
-                pedidos.add(pedido);
+                    Date data = join.getDate(7);
+                    Instant instant = Instant.ofEpochMilli(data.getTime());
+                    pedido.setData(LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalDate());
+
+                    pedido.setCliente(
+                            new ClienteDaoPostgres().
+                                    getCliente(join.getInt(1))
+                    );
+
+                    pedidos.add(pedido);
+                }
             }
 
             rowSetCliente.close();

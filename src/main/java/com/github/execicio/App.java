@@ -128,7 +128,7 @@ public class App {
 
     private static void listarPedidos() {
 
-        System.out.println(new PedidoController().listar());
+        System.out.println(new PedidoController().listar(cliente.getId()));
     }
 
     private static void removerPedido() {
