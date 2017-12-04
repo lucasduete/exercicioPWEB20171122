@@ -109,9 +109,10 @@ public class ClienteDaoPostgres implements ClienteDaoInterface {
                                 rowSet.getString("Nome"),
                                 rowSet.getString("Documento"),
                                 rowSet.getDouble("Saldo"),
-                                EnumAtivo.valueOf(rowSet.getString("Ativo"))
+                                EnumAtivo.valueOf(rowSet.getString("Ativo").toUpperCase())
                         )
                 );
+
 
             rowSet.close();
             rs.close();
