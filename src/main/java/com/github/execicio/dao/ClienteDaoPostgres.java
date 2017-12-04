@@ -21,8 +21,9 @@ public class ClienteDaoPostgres implements ClienteDaoInterface {
             Connection conn = Conexao.getConnection();
 
             String sql = String.format("INSERT INTO Cliente (Nome, Documento, Saldo, Ativo) " +
-                    "VALUES (%s,%s,%f,%s)", cliente.getNome(), cliente.getDocumento(), cliente.getSaldo(),
+                    "VALUES ('%s', '%s', %f, '%s')", cliente.getNome(), cliente.getDocumento(), cliente.getSaldo(),
                         cliente.getAtivo().toString());
+            System.out.println(sql);
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
 

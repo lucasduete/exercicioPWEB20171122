@@ -2,7 +2,7 @@ package com.github.execicio.Enum;
 
 public enum EnumAtivo {
 
-    ATIVO("ativo"), INATIVO("inativo");
+    ATIVO("Ativo"), INATIVO("Inativo");
 
     private String status;
 
@@ -10,4 +10,8 @@ public enum EnumAtivo {
         this.status = status;
     }
 
+    @Override
+    public String toString() {
+        return status;
+    }
 }
