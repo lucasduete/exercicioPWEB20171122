@@ -77,10 +77,10 @@ public class Pedido {
     @Override
     public String toString() {
         return "Pedido{" +
-                "Id=" + Id +
-                ", data=" + data +
-                ", cliente=" + cliente +
-                ", valor=" + valor +
+                "Id = " + Id +
+                ", valor = " + valor +
+                ", data = " + data +
+                ", Nome do Cliente = " + cliente.getNome() +
                 '}';
     }
 }
