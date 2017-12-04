@@ -44,7 +44,7 @@ public class ClienteDaoPostgres implements ClienteDaoInterface {
             Connection conn = Conexao.getConnection();
 
             String sql = String.format("UPDATE Cliente SET Nome = %s Documento = %s Saldo = %f Ativo = %s " +
-                    "WHERE Id = %n)", cliente.getNome(), cliente.getDocumento(), cliente.getSaldo(),
+                    "WHERE Id = %d)", cliente.getNome(), cliente.getDocumento(), cliente.getSaldo(),
                     cliente.getAtivo().toString(), cliente.getId());
 
             Statement stmt = conn.createStatement();
@@ -65,7 +65,7 @@ public class ClienteDaoPostgres implements ClienteDaoInterface {
         try {
             Connection conn = Conexao.getConnection();
 
-            String sql = String.format("DELETE FROM Cliente WHERE Id = %n", cliente.getId());
+            String sql = String.format("DELETE FROM Cliente WHERE Id = %d", cliente.getId());
 
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
@@ -132,19 +132,18 @@ public class ClienteDaoPostgres implements ClienteDaoInterface {
 
             Connection conn = Conexao.getConnection();
 
-            String sql = String.format("SELECT * FROM Cliente WHERE Id = %n", idCliente);
+            String sql = String.format("SELECT * FROM Cliente WHERE Id = %d", idCliente);
 
             Statement stmt= conn.createStatement(
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_READ_ONLY,
                     ResultSet.HOLD_CURSORS_OVER_COMMIT
             );
-            ResultSet rs = stmt.executeQuery(sql);
 
             FilteredRowSet rowSet = new FilteredRowSetImpl();
 
             rowSet.setCommand(sql);
-            rowSet.execute();
+            rowSet.execute(conn);
 
             rowSet.beforeFirst();
             rowSet.setFilter(new ClienteFiltro(idCliente));
@@ -159,7 +158,6 @@ public class ClienteDaoPostgres implements ClienteDaoInterface {
                 );
 
             rowSet.close();
-            rs.close();
             stmt.close();
             conn.close();
         } catch (SQLException | ClassNotFoundException ex) {
