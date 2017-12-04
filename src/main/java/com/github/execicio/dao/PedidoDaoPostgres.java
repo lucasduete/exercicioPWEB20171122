@@ -25,7 +25,7 @@ public class PedidoDaoPostgres implements PedidoDaoInterface {
             Connection conn = Conexao.getConnection();
 
             String sql = String.format("INSERT INTO Pedido (Data, Valor, idCliente) " +
-                    "VALUES(%t, %d, %n)", Date.valueOf(pedido.getData()), pedido.getValor(), pedido.getCliente().getId());
+                    "VALUES(%t, %f, %d)", Date.valueOf(pedido.getData()), pedido.getValor(), pedido.getCliente().getId());
 
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
@@ -46,8 +46,8 @@ public class PedidoDaoPostgres implements PedidoDaoInterface {
         try {
             Connection conn = Conexao.getConnection();
 
-            String sql = String.format("UPDATE Pedido SET Data = ? Valor = ? idCliente = ? " +
-                    "WHERE Id = ?", Date.valueOf(pedido.getData()), pedido.getValor(),
+            String sql = String.format("UPDATE Pedido SET Data = %t Valor = %f idCliente = %d " +
+                    "WHERE Id = %d", Date.valueOf(pedido.getData()), pedido.getValor(),
                     pedido.getCliente().getId(), pedido.getId());
 
             JdbcRowSet stmt = new JdbcRowSetImpl(conn);
@@ -71,7 +71,7 @@ public class PedidoDaoPostgres implements PedidoDaoInterface {
         try {
             Connection conn = Conexao.getConnection();
 
-            String sql = String.format("DELETE Pedido WHERE Id = %n", pedido.getId());
+            String sql = String.format("DELETE Pedido WHERE Id = %d", pedido.getId());
 
             JdbcRowSet stmt = new JdbcRowSetImpl(conn);
             stmt.setCommand(sql);
@@ -154,7 +154,7 @@ public class PedidoDaoPostgres implements PedidoDaoInterface {
         try {
             Connection conn = Conexao.getConnection();
 
-            String sql = String.format("SELECT * FROM Pedido WHERE Id = %n", idPedido);
+            String sql = String.format("SELECT * FROM Pedido WHERE Id = %d", idPedido);
 
             Statement stmt = conn.createStatement(
                     ResultSet.TYPE_SCROLL_SENSITIVE,
